@@ -1,0 +1,67 @@
+---
+# tasks file for template
+
+#- name: Verifica que sea Ubuntu
+#  fail:   msg="S.O. no soportado"
+#  when: ansible_distribution_version != "16.04" and ansible_distribution != "Ubuntu"
+
+- name: Ejecutando "apt-get update"
+  apt:
+    update_cache: yes
+    cache_valid_time: 3600
+
+- name: Update all packages to the latest version
+  apt:
+    upgrade: dist
+
+- name: Upgrade all packages to the latest version
+  apt:
+    name: aptitude
+    state: latest
+
+- name: Remove dependencies that are no longer required
+  apt:
+    autoremove: yes
+
+- name: Instalamos programas basicos
+  apt:
+    name: "{{ item }}"
+    update_cache: yes
+    cache_valid_time: 3600
+  with_items:
+    - htop
+    - vim
+
+- name: Permitimos cambiar hostname
+  lineinfile:
+    path: /etc/cloud/cloud.cfg
+    state: present
+    regexp: 'preserve_hostname: false'
+    line: 'preserve_hostname: true'
+
+- name: Configuracion networking
+  template:
+    src: templates/50-cloud-init.yaml
+    dest: /etc/netplan/50-cloud-init.yaml
+
+- name: Configuracion fichero hosts
+  template:
+    src: templates/hosts
+    dest: /etc/hosts
+
+- name: Configuracion fichero hostname
+  template:
+    src: templates/hostname
+    dest: /etc/hostname
+
+#- name: Rebotando equipo
+#  shell: /sbin/shutdown -r now
+
+- name: Restart server
+  shell: sleep 2 && shutdown -r now
+  async: 1
+  poll: 0
+  ignore_errors: true
+
+- name: Rebotando equipo
+  shell: /sbin/shutdown -r now && sleep 1

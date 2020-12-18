@@ -1,0 +1,6 @@
+---
+# vars file for template
+
+ip_equipo: "172.26.0.66"
+hostname_equipo: "prueba"
+dns: "172.26.0.11"

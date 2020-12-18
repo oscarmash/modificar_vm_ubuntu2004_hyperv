@@ -1,0 +1,13 @@
+---
+
+- name: Modificacion plantilla Ubuntu
+  hosts: template
+  gather_facts: false
+
+  pre_tasks:
+    - name: Instalar python si no esta
+      #raw: test -e /usr/bin/python || (apt -y update && apt install -y python-minimal)
+      raw: bash -c "test -e /usr/bin/python || (apt -qqy update && apt install -qy python-minimal)"
+
+  roles:
+    - template
