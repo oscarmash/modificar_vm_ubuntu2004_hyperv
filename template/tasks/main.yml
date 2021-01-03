@@ -54,6 +54,11 @@
     src: templates/hostname
     dest: /etc/hostname
 
+- name: delete a file (00-installer-config.yaml) if it exists
+  file:
+    path: /etc/netplan/00-installer-config.yaml
+    state: absent
+
 #- name: Rebotando equipo
 #  shell: /sbin/shutdown -r now
 
